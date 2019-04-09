@@ -1,0 +1,15 @@
+{
+  "name": "simplespa",
+  "version": "1.0.0",
+  "description": "simple single page application with javascript",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "erno",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
