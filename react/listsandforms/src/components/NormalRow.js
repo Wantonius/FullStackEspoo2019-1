@@ -14,7 +14,7 @@ export const NormalRow = ({item,remove,edit}) => {
 					</Button>
 				</Table.Cell>
 				<Table.Cell>
-					<Button onClick={()=>edit(item.id)}>
+					<Button onClick={()=>edit(item.id,item)}>
 						Edit
 					</Button>
 				</Table.Cell>				

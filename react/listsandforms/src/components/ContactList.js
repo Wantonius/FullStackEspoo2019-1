@@ -1,8 +1,8 @@
 import React from 'react';
-import {Table,Button} from 'semantic-ui-react';
+import {Table} from 'semantic-ui-react';
 import {NormalRow} from './NormalRow';
 import {RemoveRow} from './RemoveRow';
-
+import EditRow from './EditRow';
 export default class ContactList extends React.Component {
 
 	constructor(props) {
@@ -30,9 +30,38 @@ export default class ContactList extends React.Component {
 		if(tempId === this.state.removeId) {
 			this.props.remove(id);
 		}
-		this.setState({
-			removeId:0
-		})
+		this.cancel();
+	}
+	
+	edit = (id,item) => {
+		let tempId = parseInt(id,10);
+		if(this.state.editId === 0) {
+			if(!item) {
+				return;
+			}		
+			this.setState({
+				editId:tempId,
+				removeId:0,
+				firstname:item.firstname,
+				lastname:item.lastname,
+				address:item.address,
+				email:item.email,
+				phone:item.phone
+			})
+			return;
+		}
+		if(tempId === this.state.editId) {
+			let contact = {
+				id:tempId,
+				firstname:this.state.firstname,
+				lastname:this.state.lastname,
+				address:this.state.address,
+				email:this.state.email,
+				phone:this.state.phone
+			}
+			this.props.editContact(contact,id);
+		}
+		this.cancel();
 	}
 	
 	cancel = () => {
@@ -71,7 +100,24 @@ export default class ContactList extends React.Component {
 								edit={this.edit}/>
 					}
 				} else {
-					return <div></div>
+					if(this.state.editId === item.id) {
+
+						return <EditRow key={item.id}
+								item={item}
+								firstname={this.state.firstname}
+								lastname={this.state.lastname}
+								address={this.state.address}
+								email={this.state.email}
+								phone={this.state.phone}
+								save={this.edit}
+								cancel={this.cancel}
+								onChange={this.onChange}/>
+					} else {
+						return <NormalRow key={item.id}
+								item={item}
+								remove={this.remove}
+								edit={this.edit}/>
+					}
 				}
 			})
 			
