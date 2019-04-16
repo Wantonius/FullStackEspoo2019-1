@@ -17,8 +17,6 @@ app.use(bodyParser.json());
 
 // USER MANAGEMENT
 
-const registeredUsers = [];
-const loggedSessions = [];
 const time_to_live_diff = 3600000;
 /*
 SESSION DATA
@@ -35,20 +33,27 @@ isUserLogged = (req,res,next) => {
 	if(!token) {
 		return res.status(403).json({"message":"forbidden"});
 	}
-	for(let i=0;i<loggedSessions.length;i++) {
-		if(token === loggedSessions[i].token) {
-			let dateNow = new Date().getTime();
-			if(dateNow > loggedSessions[i].ttl) {
-				loggedSessions.splice(i,1);
-				return res.status(403).json({"message":"forbidden"});
-			}
-			loggedSessions[i].ttl = dateNow+time_to_live_diff;
-			req.session = {};
-			req.session.username = loggedSessions[i].username;
-			return next();
+	sessionModel.findOne({"token":token}, function(err,session) {
+		if(err) {
+			return res.status(403).json({"message":"forbidden"});
 		}
-	}
-	return res.status(403).json({"message":"forbidden"});
+		if(!session) {
+			return res.status(403).json({"message":"forbidden"});
+		}
+		let now = new Date().getTime();
+		if(now > session.ttl) {
+			sessionModel.deleteOne({"_id":session._id}, function(err) {
+				return res.status(403).json({"message":"forbidden"});
+			})
+		} else {
+			req.session = {};
+			req.session.username = session.username;
+			session.ttl = now+time_to_live_diff;
+			session.save(function(err,item) {
+				return next();
+			})
+		}
+	})
 }
 
 
@@ -114,7 +119,7 @@ app.post("/login",function(req,res) {
 					}
 				})
 			} else {
-				return res.status(403).json({"message":"login failed"});				
+					return res.status(403).json({"message":"login failed"});				
 			}
 	});
 });

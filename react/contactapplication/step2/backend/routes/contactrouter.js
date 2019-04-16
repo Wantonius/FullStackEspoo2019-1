@@ -1,11 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const contactModel = require('../models/contact');
 
 let router = express.Router();
 
-//contact database
-
-let database = [];
-let id = 100;
 
 /*
 Data structure:
@@ -27,13 +25,17 @@ let contact = {
 */	
 
 router.get("/contact", function(req,res) {
-	let tempList = [];
-	for(let i = 0;i<database.length;i++) {
-		if(req.session.username === database[i].user) {
-			tempList.push(database[i]);
+	let username = req.session.username;
+	let list = [];
+	contactModel.find({"user":username}, function(err,items,count) {
+		if(err) {
+			return res.status(409).json({"data":list})
 		}
-	}
-	return res.status(200).json(tempList);
+		if(!items) {
+			return res.status(409).json({"data":list})
+		}
+		return res.status(200).json({"data":items});
+	});
 });
 
 router.post("/contact", function(req,res) {
@@ -43,8 +45,7 @@ router.post("/contact", function(req,res) {
 	if(req.body.name.length === 0 || req.body.surname.length === 0) {
 		return res.status(422).json({"message":"provide required data"})
 	}
-	let contact = {
-		id:id++,
+	let contact = new contactModel({
 		user:req.session.username,
 		name:req.body.name,
 		surname:req.body.surname,
@@ -57,9 +58,13 @@ router.post("/contact", function(req,res) {
 		postcode: req.body.postcode,
 		city: req.body.city,
 		country: req.body.country
-	}
-	database.push(contact);
-	return res.status(200).json({"message":"success"});
+	})
+	contact.save(function(err) {
+		if(err) {
+			return res.status(409).json({"message":"try again later"});
+		} 
+		return res.status(200).json({"message":"success"});
+	});
 })
 
 router.delete("/contact/:id", function(req,res) {
