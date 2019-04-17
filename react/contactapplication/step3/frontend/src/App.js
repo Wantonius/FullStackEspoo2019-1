@@ -97,7 +97,29 @@ class App extends Component {
   }
   
   addToList = (contact) => {
-	  console.log(contact);
+	  let request = {
+		  method:"POST",
+		  mode:"cors",
+		  headers:{"Content-Type":"application/json",
+				   "token":this.state.token},
+		  body:JSON.stringify(contact)
+	  }
+	  fetch("/api/contact",request).then(response => {
+		  if(response.ok) {
+			  this.getList();
+		  } else {
+			  console.log("Failed to add contact. Reason:"+response.status);
+			  if(response.status===403) {
+				  this.setState({
+					  isLogged:false,
+					  token:"",
+					  contactList:[]
+				  })
+			  }
+		  }
+	  }).catch(error => {
+			console.log(error);
+	  })
   }
   
   render() {
