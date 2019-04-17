@@ -3,6 +3,7 @@ import {Switch,Route} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import LoginForm from './components/LoginForm';
 import ContactList from './components/ContactList';
+import ContactForm from './components/ContactForm';
 import './App.css';
 
 class App extends Component {
@@ -95,6 +96,9 @@ class App extends Component {
 	  })
   }
   
+  addToList = (contact) => {
+	  console.log(contact);
+  }
   
   render() {
     return (
@@ -108,6 +112,9 @@ class App extends Component {
 			}/>
 			<Route path="/list" render={() =>
 				<ContactList contactList={this.state.contactList}/>
+			}/>
+			<Route path="/contact" render={() =>
+				<ContactForm addToList={this.addToList}/>
 			}/>
 		</Switch>
       </div>
