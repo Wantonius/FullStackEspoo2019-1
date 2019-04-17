@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Switch,Route} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import LoginForm from './components/LoginForm';
+import ContactList from './components/ContactList';
 import './App.css';
 
 class App extends Component {
@@ -9,10 +10,13 @@ class App extends Component {
 	  super(props);
 	  this.state= {
 		  isLogged:false,
-		  token:""
+		  token:"",
+		  contactList:[]
 	  }
   }
   
+  
+  //LOGIN API
   onRegister = (user) => {
 	  let request = {
 		  method:"POST",
@@ -45,7 +49,7 @@ class App extends Component {
 				this.setState({
 					token:data.token,
 					isLogged:true
-				});
+				}, () => {this.getList()});
 			}).catch(error => {
 				console.log("JSON parse failed in response:"+error);
 			});
@@ -55,7 +59,42 @@ class App extends Component {
 	  }).catch(error => {
 		console.log(error);  
 	  });	  
-  } 
+}          
+  
+  //CONTACTLIST API
+  
+  getList = () => {
+	  console.log("getList");
+	  let request = {
+		  method:"GET",
+		  mode:"cors",
+		  headers:{"Content-Type":"application/json",
+			       "token":this.state.token}
+	  }
+	  fetch("/api/contact",request).then(response => {
+		  if(response.ok) {
+			  response.json().then(data => {
+					this.setState({
+						contactList:data.data
+					})
+			  }).catch(error => {
+				console.log("Parse JSON failed for contactList:"+error);  
+			  })
+		  } else {
+			    if(response.status === 403) {
+				  this.setState({
+					  isLogged:false,
+					  token:"",
+					  contactList:[]
+				  })
+				}
+				console.log("Fetch list failed. Reason:"+response.status);
+		  }
+	  }).catch(error => {
+		  console.log(error);
+	  })
+  }
+  
   
   render() {
     return (
@@ -66,6 +105,9 @@ class App extends Component {
 			<Route exact path="/" render={() => 
 				<LoginForm onLogin={this.onLogin}
 						   onRegister={this.onRegister}/>
+			}/>
+			<Route path="/list" render={() =>
+				<ContactList contactList={this.state.contactList}/>
 			}/>
 		</Switch>
       </div>
