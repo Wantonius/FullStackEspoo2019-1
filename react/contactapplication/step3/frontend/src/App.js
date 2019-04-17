@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Switch,Route} from 'react-router-dom';
+import {Switch,Route,Redirect} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import LoginForm from './components/LoginForm';
 import ContactList from './components/ContactList';
@@ -16,7 +16,20 @@ class App extends Component {
 	  }
   }
   
+  loadFromStorage = () => {
+	  if(sessionStorage.getItem("state")) {
+		  let state = JSON.parse(sessionStorage.getItem("state"));
+		  this.setState(state)
+	  }
+  }
   
+  saveToStorage = () => {
+	  sessionStorage.setItem("state",JSON.stringify(this.state));
+  }
+  
+  componentDidMount() {
+	  this.loadFromStorage();
+  }
   //LOGIN API
   onRegister = (user) => {
 	  let request = {
@@ -50,7 +63,10 @@ class App extends Component {
 				this.setState({
 					token:data.token,
 					isLogged:true
-				}, () => {this.getList()});
+				}, () => {
+					this.getList();
+					this.saveToStorage();
+				});
 			}).catch(error => {
 				console.log("JSON parse failed in response:"+error);
 			});
@@ -77,6 +93,8 @@ class App extends Component {
 			  response.json().then(data => {
 					this.setState({
 						contactList:data.data
+					}, () => {
+						this.saveToStorage();
 					})
 			  }).catch(error => {
 				console.log("Parse JSON failed for contactList:"+error);  
@@ -87,6 +105,8 @@ class App extends Component {
 					  isLogged:false,
 					  token:"",
 					  contactList:[]
+				  }, () => {
+					  this.saveToStorage();
 				  })
 				}
 				console.log("Fetch list failed. Reason:"+response.status);
@@ -114,7 +134,9 @@ class App extends Component {
 					  isLogged:false,
 					  token:"",
 					  contactList:[]
-				  })
+				}, () => {
+					this.saveToStorage();
+			  })
 			  }
 		  }
 	  }).catch(error => {
@@ -128,16 +150,27 @@ class App extends Component {
 		<NavBar isLogged={this.state.isLogged}/>
 		<hr/>
 		<Switch>
-			<Route exact path="/" render={() => 
-				<LoginForm onLogin={this.onLogin}
-						   onRegister={this.onRegister}/>
-			}/>
-			<Route path="/list" render={() =>
-				<ContactList contactList={this.state.contactList}/>
-			}/>
-			<Route path="/contact" render={() =>
-				<ContactForm addToList={this.addToList}/>
-			}/>
+			<Route exact path="/" render={() => (
+				this.state.isLogged ?
+				(<Redirect to="/list"/>) :
+				(<LoginForm onLogin={this.onLogin}
+						   onRegister={this.onRegister}/>)
+			)}/>
+			<Route path="/list" render={() => (
+				this.state.isLogged ?
+				(<ContactList contactList={this.state.contactList}/>):
+				(<Redirect to="/"/>)
+			)}/>
+			<Route path="/contact" render={() => (
+			    this.state.isLogged ?
+				(<ContactForm addToList={this.addToList}/>):
+				(<Redirect to="/"/>)
+			)}/>
+			<Route render={() => (
+				this.state.isLogged ? 
+				(<Redirect to="/list"/>):
+				(<Redirect to="/"/>)
+			)}/>	
 		</Switch>
       </div>
     );
