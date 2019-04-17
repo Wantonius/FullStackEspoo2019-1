@@ -68,18 +68,24 @@ router.post("/contact", function(req,res) {
 })
 
 router.delete("/contact/:id", function(req,res) {
-	let id = parseInt(req.params.id,10);
-	for(let i=0;i<database.length;i++) {
-		if(database[i].id === id) {
-			if(req.session.username === database[i].user) {
-				database.splice(i,1)
-				return res.status(200).json({"message":"success"});
-			} else {
-				return res.status(403).json({"message":"forbidden"});
-			}
+	contactModel.findById(req.params.id, function(err,item) {
+		if(err) {
+			return res.status(409).json({"message":err});
 		}
-	}
-	return res.status(404).json({"message":"not found"});
+		if(!item) {
+			return res.status(404).json({"message":"not found"});
+		}
+		if(req.session.username === item.user) {
+			contactModel.deleteOne({"_id":req.params.id}, function(err) {
+				if(err) {
+					return res.status(409).json({"message":err});
+				}
+				return res.status(200).json({"message":"success"});
+			});
+		} else {
+			return res.status(403).json({"message":"not allowed"});
+		}
+	})
 });
 
 router.put("/contact/:id", function(req,res) {
