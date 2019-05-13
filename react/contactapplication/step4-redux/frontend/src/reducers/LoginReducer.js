@@ -7,14 +7,28 @@ import {
 } from '../actions/LoginActions';
 
 
-const initialState = {
-	loading:false,
-	isLogged:false,
-	token:"",
-	error:""
+const getInitialStateFromStorage = () => {
+	if(sessionStorage.getItem("loginstate")) {
+		let loginstate = JSON.parse(sessionStorage.getItem("loginstate"));
+		return loginstate;
+	} else {
+		return {
+			loading:false,
+			isLogged:false,
+			token:"",
+			error:""
+		}
+	}
 }
 
+const saveLoginState = (state) => {
+	sessionStorage.setItem("loginstate",JSON.stringify(state));
+}
+
+const initialState = getInitialStateFromStorage();
+
 const loginReducer = (state=initialState, action) => {
+	let tempState = {};
 	switch(action.type) {
 		case LOGIN_LOADING:
 			return {
@@ -23,30 +37,38 @@ const loginReducer = (state=initialState, action) => {
 				loading:true
 			}
 		case REGISTER_SUCCESS:
-			return {
+		    tempState = {
 				...state,
 				error:"",
 				loading:false
 			}
-		case REGISTER_FAILED: 
-			return {
+			saveLoginState(tempState);
+			return tempState;
+		case REGISTER_FAILED:
+			tempState = {
 				...state,
 				error:action.error,
 				loading:false
 			}
+			saveLoginState(tempState);
+			return tempState;
 		case LOGIN_SUCCESS:
-			return {
+			tempState =  {
 				isLogged:true,
 				token:action.token,
 				error:"",
 				loading:false
 			}
-		case LOGIN_FAILED: 
-			return {
+			saveLoginState(tempState);
+			return tempState;
+		case LOGIN_FAILED:
+			tempState = {
 				...state,
 				error:action.error,
 				loading:false
 			}
+			saveLoginState(tempState);
+			return tempState;
 		default:
 			return state
 	}
