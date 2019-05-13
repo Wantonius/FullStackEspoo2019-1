@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form,Button} from 'semantic-ui-react';
 import {connect} from 'react-redux';
-import {onRegister} from '../actions/LoginActions';
+import {onRegister, onLogin} from '../actions/LoginActions';
 
 // Will be changed to functional component in a later step ...with hooks
 
@@ -26,7 +26,7 @@ class LoginForm extends React.Component {
 			username:this.state.username,
 			password:this.state.password
 		}
-		this.props.onLogin(user);
+		this.props.dispatch(onLogin(user));
 	}
 	
 	onRegister = (event) => {

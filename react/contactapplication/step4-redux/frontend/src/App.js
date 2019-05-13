@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import {Switch,Route,Redirect} from 'react-router-dom';
+import {Switch,Route,Redirect,withRouter} from 'react-router-dom';
 import NavBar from './components/NavBar';
 import LoginForm from './components/LoginForm';
 import ContactList from './components/ContactList';
 import ContactForm from './components/ContactForm';
+import {connect} from 'react-redux';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
 	  super(props);
 	  this.state= {
-		  isLogged:false,
-		  token:"",
 		  contactList:[]
 	  }
   }
@@ -31,52 +30,9 @@ class App extends Component {
 	  this.loadFromStorage();
   }
   //LOGIN API
-  onRegister = (user) => {
-	  let request = {
-		  method:"POST",
-		  mode:"cors",
-		  headers:{"Content-Type":"application/json"},
-		  body:JSON.stringify(user)
-	  }
-	  fetch("/register",request).then(response => {
-		if(response.ok) {
-			alert("Register success!");
-		} else {
-			alert("Register failed! Is username already in use?");
-		}
-	  }).catch(error => {
-		console.log(error);  
-	  })
-	  
-  }
 
-  onLogin = (user) => {
-	  let request = {
-		  method:"POST",
-		  mode:"cors",
-		  headers:{"Content-Type":"application/json"},
-		  body:JSON.stringify(user)
-	  }
-	  fetch("/login",request).then(response => {
-		if(response.ok) {
-			response.json().then(data => {
-				this.setState({
-					token:data.token,
-					isLogged:true
-				}, () => {
-					this.getList();
-					this.saveToStorage();
-				});
-			}).catch(error => {
-				console.log("JSON parse failed in response:"+error);
-			});
-		} else {
-			console.log("Login failed. Reason:"+response.status);
-		}
-	  }).catch(error => {
-		console.log(error);  
-	  });	  
-}          
+
+    
   
   //CONTACTLIST API
   
@@ -147,27 +103,26 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-		<NavBar isLogged={this.state.isLogged}/>
+		<NavBar/>
 		<hr/>
 		<Switch>
 			<Route exact path="/" render={() => (
-				this.state.isLogged ?
+				this.props.isLogged ?
 				(<Redirect to="/list"/>) :
-				(<LoginForm onLogin={this.onLogin}
-						   onRegister={this.onRegister}/>)
+				(<LoginForm />)
 			)}/>
 			<Route path="/list" render={() => (
-				this.state.isLogged ?
+				this.props.isLogged ?
 				(<ContactList contactList={this.state.contactList}/>):
 				(<Redirect to="/"/>)
 			)}/>
 			<Route path="/contact" render={() => (
-			    this.state.isLogged ?
+			    this.props.isLogged ?
 				(<ContactForm addToList={this.addToList}/>):
 				(<Redirect to="/"/>)
 			)}/>
 			<Route render={() => (
-				this.state.isLogged ? 
+				this.props.isLogged ? 
 				(<Redirect to="/list"/>):
 				(<Redirect to="/"/>)
 			)}/>	
@@ -177,4 +132,10 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+	return {
+		isLogged:state.isLogged
+	}
+}
+
+export default withRouter(connect(mapStateToProps)(App));

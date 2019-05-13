@@ -34,6 +34,19 @@ const loginReducer = (state=initialState, action) => {
 				error:action.error,
 				loading:false
 			}
+		case LOGIN_SUCCESS:
+			return {
+				isLogged:true,
+				token:action.token,
+				error:"",
+				loading:false
+			}
+		case LOGIN_FAILED: 
+			return {
+				...state,
+				error:action.error,
+				loading:false
+			}
 		default:
 			return state
 	}
