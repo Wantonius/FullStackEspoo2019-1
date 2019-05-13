@@ -16,6 +16,19 @@ const shoppingReducer = (state = initialState, action) => {
 					id:item.id
 				}
 				return tempState;
+			case "REMOVE_FROM_LIST":
+				let id = parseInt(action.id,10);
+				let tempList2=[];
+				for(let i=0;i<state.list.length;i++) {
+					if(state.list[i].id !== id) {
+						tempList2.push(state.list[i]);
+					}
+				}
+				tempState = {
+					list:tempList2,
+					id:state.id
+				}
+				return tempState;
 			default:
 				return state;
 		}

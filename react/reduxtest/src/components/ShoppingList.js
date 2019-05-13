@@ -3,6 +3,14 @@ import {Table,Button} from 'semantic-ui-react';
 import {connect} from 'react-redux';
            
 class ShoppingList extends React.Component {
+	
+	remove = (event) => {
+		let action = {
+			type:"REMOVE_FROM_LIST",
+			id:event.target.name
+		}
+		this.props.dispatch(action);
+	}
 
 	render() {
 		let items = this.props.list.map(item => {
@@ -10,6 +18,8 @@ class ShoppingList extends React.Component {
 						<Table.Cell>{item.type}</Table.Cell>
 						<Table.Cell>{item.count}</Table.Cell>
 						<Table.Cell>{item.price}</Table.Cell>
+						<Table.Cell><Button onClick={this.remove}
+									        name={item.id}>Remove</Button></Table.Cell>
 					</Table.Row>
 		})
 		return (
@@ -19,6 +29,7 @@ class ShoppingList extends React.Component {
 						<Table.HeaderCell>Type</Table.HeaderCell>
 						<Table.HeaderCell>Count</Table.HeaderCell>
 						<Table.HeaderCell>Price</Table.HeaderCell>
+						<Table.HeaderCell>Remove</Table.HeaderCell>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
