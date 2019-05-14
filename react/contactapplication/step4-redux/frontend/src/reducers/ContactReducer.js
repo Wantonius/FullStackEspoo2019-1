@@ -3,7 +3,10 @@ import {
 	CONTACTS_FETCH_SUCCESS,
 	CONTACTS_FETCH_FAILED,
 	CONTACTS_ADD_SUCCESS,
-	CONTACTS_ADD_FAILED } from '../actions/ContactActions';
+	CONTACTS_ADD_FAILED,
+	CONTACTS_REMOVE_SUCCESS,
+	CONTACTS_REMOVE_FAILED
+	} from '../actions/ContactActions';
 	
 	
 const getInitialStateFromStorage = () => {
@@ -65,7 +68,23 @@ const contactReducer = (state = initialState, action) => {
 				error:action.error
 			}
 			saveStateToStorage(tempState);
-			return tempState;		
+			return tempState;
+		case CONTACTS_REMOVE_SUCCESS: 
+			tempState = {
+				...state,
+				loading:false,
+				error:""
+			}
+			saveStateToStorage(tempState);
+			return tempState;
+		case CONTACTS_REMOVE_FAILED:
+			tempState = {
+				...state,
+				loading:false,
+				error:action.error
+			}
+			saveStateToStorage(tempState);
+			return tempState;
 		default:
 			return state;
 	}

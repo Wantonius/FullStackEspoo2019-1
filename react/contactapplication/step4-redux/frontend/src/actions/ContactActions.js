@@ -5,7 +5,8 @@ export const CONTACTS_FETCH_SUCCESS = "CONTACTS_FETCH_SUCCESS"
 export const CONTACTS_FETCH_FAILED = "CONTACTS_FETCH_FAILED"
 export const CONTACTS_ADD_SUCCESS = "CONTACTS_ADD_SUCCESS"
 export const CONTACTS_ADD_FAILED = "CONTACTS_ADD_FAILED"
-
+export const CONTACTS_REMOVE_SUCCESS = "CONTACTS_REMOVE_SUCCESS"
+export const CONTACTS_REMOVE_FAILED = "CONTACTS_REMOVE_FAILED"
 // Actions
 
 export const getList = (token) => {
@@ -66,6 +67,34 @@ export const addToList = (contact,token) => {
 	}
 }
 
+export const removeFromList = (id, token) => {
+	return dispatch => {
+	  let request = {
+		  method:"DELETE",
+		  mode:"cors",
+		  headers:{"Content-Type":"application/json",
+				   "token":token}
+	  }
+	  dispatch(contactsLoading());
+	  let url = "/api/contact/"+id;
+	  fetch(url,request).then(response => {
+		  if(response.ok) {
+			  dispatch(contactsRemoveSuccess());
+			  dispatch(getList(token));
+		  } else {
+			if(response.status === 403) {
+				dispatch(contactsRemoveFailed("Server responded with a session mismatch. Logging out."));
+				dispatch(logoutSuccess());
+			} else {
+				dispatch(contactsRemoveFailed("Server responded with an error:"+response.statusText));				
+			}
+		  }
+	  }).catch(error => {
+				dispatch(contactsRemoveFailed("Server responded with an error:"+error));			  
+	  })
+	}
+}
+
 // Action Creators
 
 export const contactsLoading = () => {
@@ -97,6 +126,19 @@ export const contactsAddSuccess = () => {
 export const contactsAddFailed = (error) => {
 	return {
 		type:CONTACTS_ADD_FAILED,
+		error:error
+	}
+}
+
+export const contactsRemoveSuccess = () => {
+	return {
+		type:CONTACTS_REMOVE_SUCCESS
+	}
+}
+
+export const contactsRemoveFailed = (error) => {
+	return {
+		type:CONTACTS_REMOVE_FAILED,
 		error:error
 	}
 }
