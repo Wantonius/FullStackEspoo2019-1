@@ -1,7 +1,9 @@
 import React from 'react';
 import {Form,Button,Label} from 'semantic-ui-react';
+import {connect} from 'react-redux';
+import {addToList} from '../actions/ContactActions';
 
-export default class ContactForm extends React.Component {
+class ContactForm extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -48,7 +50,7 @@ export default class ContactForm extends React.Component {
 			"postcode":this.state.postcode,
 			"country":this.state.country
 		}
-		this.props.addToList(contact);
+		this.props.dispatch(addToList(contact,this.props.token));
 		this.setState({
 			name:"",
 			surname:"",
@@ -212,3 +214,11 @@ export default class ContactForm extends React.Component {
 	
 	
 }
+
+const mapStateToProps = (state) => {
+	return {
+		token:state.login.token
+	}
+}
+
+export default connect(mapStateToProps)(ContactForm);
