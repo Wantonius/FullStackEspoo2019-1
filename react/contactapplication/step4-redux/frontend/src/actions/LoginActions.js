@@ -5,6 +5,8 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILED = "LOGIN_FAILED";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAILED = "REGISTER_FAILED";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+export const LOGOUT_FAILED = "LOGOUT_FAILED";
 
 //ACTIONS
 
@@ -58,6 +60,26 @@ export const onLogin = (user) => {
 	}
 }
 
+export const onLogout = (token) => {
+	return dispatch => {
+		let request = {
+		  method:"POST",
+		  mode:"cors",
+		  headers:{"Content-Type":"application/json",
+				   "token":token}			
+		}
+		dispatch(loginLoading());
+		fetch("/logout",request).then(response => {
+			if(response.ok) {
+				dispatch(logoutSuccess());
+			} else {
+				dispatch(logoutFailed("Server responded with an error. Logging out."));
+			}
+		}).catch(error => {
+			dispatch(logoutFailed("Server responded with an error. Logging out."));	
+		});
+	}
+}
 //ACTION CREATORS
 
 export const loginLoading = () => {
@@ -89,6 +111,19 @@ export const loginSuccess = (token) => {
 export const loginFailed = (error) => {
 	return {
 		type:LOGIN_FAILED,
+		error:error
+	}
+}
+
+export const logoutSuccess = () => {
+	return {
+		type:LOGOUT_SUCCESS
+	}
+}
+
+export const logoutFailed = (error) => {
+	return {
+		type:LOGOUT_FAILED,
 		error:error
 	}
 }

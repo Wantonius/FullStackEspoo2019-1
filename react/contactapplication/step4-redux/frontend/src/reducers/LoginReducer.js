@@ -3,7 +3,9 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAILED,
 	REGISTER_SUCCESS,
-	REGISTER_FAILED
+	REGISTER_FAILED,
+	LOGOUT_FAILED,
+	LOGOUT_SUCCESS
 } from '../actions/LoginActions';
 
 
@@ -69,6 +71,24 @@ const loginReducer = (state=initialState, action) => {
 			}
 			saveLoginState(tempState);
 			return tempState;
+		case LOGOUT_SUCCESS: 
+			tempState = {
+				error:"",
+				loading:false,
+				isLogged:false,
+				token:""
+			}
+			saveLoginState(tempState);
+			return tempState;
+		case LOGOUT_FAILED:
+			tempState = {
+				error:action.error,
+				loading:false,
+				isLogged:false,
+				token:""
+			}
+			saveLoginState(tempState);
+			return tempState;			
 		default:
 			return state
 	}

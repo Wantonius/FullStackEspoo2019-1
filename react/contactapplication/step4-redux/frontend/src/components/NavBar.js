@@ -1,8 +1,14 @@
 import React from 'react'
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {onLogout} from '../actions/LoginActions';
 
 class NavBar extends React.Component {
+	
+	logout = () => {
+		this.props.dispatch(onLogout(this.props.token));
+	}
+	
 	render() {
 		let style = {
 			"height":60,
@@ -23,7 +29,7 @@ class NavBar extends React.Component {
 				<ul style={{"listStyleType":"none"}}>
 					<li><Link to="/list">Contacts</Link></li>
 					<li><Link to="/contact">Add Contact</Link></li>
-					<li><Link to="/">Logout</Link></li>
+					<li><Link to="/" onClick={this.logout}>Logout</Link></li>
 				</ul>
 			</div>)
 		} else {
@@ -38,7 +44,8 @@ const mapStateToProps = (state) => {
 	return {
 		isLogged:state.isLogged,
 		loading:state.loading,
-		error:state.error
+		error:state.error,
+		token:state.token
 	}
 }
 

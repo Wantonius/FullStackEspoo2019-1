@@ -124,6 +124,19 @@ app.post("/login",function(req,res) {
 	});
 });
 
+app.post("/logout",function(req,res) {
+	let token = req.headers.token;
+	if(!token) {
+		return res.status(403).json({"message":"forbidden"});
+	}
+	sessionModel.findOneAndDelete({"token":token}, function(err,item) {
+		if(err) {
+			return res.status(403).json({"message":"forbidden"});
+		}
+		return res.status(200).json({"message":"success"});
+	})
+});
+
 app.use('/api',isUserLogged,contactRouter);
 
 app.listen(port);
