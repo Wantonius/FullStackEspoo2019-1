@@ -1,4 +1,5 @@
 //ACTION CONSTANTS
+import {getList} from './ContactActions';
 
 export const LOGIN_LOADING = "LOGIN_LOADING";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
@@ -47,7 +48,8 @@ export const onLogin = (user) => {
 	  fetch("/login",request).then(response => {
 		if(response.ok) {
 			response.json().then(data => {
-				dispatch(loginSuccess(data.token))
+				dispatch(loginSuccess(data.token));
+				dispatch(getList(data.token));
 			}).catch(error => {
 				dispatch(loginFailed("User info parsing failed:"+error));
 			});
