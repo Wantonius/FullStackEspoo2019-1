@@ -50,6 +50,22 @@ const contactReducer = (state = initialState, action) => {
 			}
 			saveStateToStorage(tempState);
 			return tempState;
+		case CONTACTS_ADD_SUCCESS:
+			tempState = {
+				...state,
+				loading:false,
+				error:""
+			}
+			saveStateToStorage(tempState);
+			return tempState;
+		case CONTACTS_ADD_FAILED:
+			tempState = {
+				...state,
+				loading:false,
+				error:action.error
+			}
+			saveStateToStorage(tempState);
+			return tempState;		
 		default:
 			return state;
 	}

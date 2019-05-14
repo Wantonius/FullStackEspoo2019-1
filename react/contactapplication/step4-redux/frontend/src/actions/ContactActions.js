@@ -38,6 +38,33 @@ export const getList = (token) => {
 		}
 }
 
+export const addToList = (contact,token) => {
+	return dispatch => {
+	  let request = {
+		  method:"POST",
+		  mode:"cors",
+		  headers:{"Content-Type":"application/json",
+				   "token":token},
+		  body:JSON.stringify(contact)
+	  }
+	  dispatch(contactsLoading());
+	  fetch("/api/contact",request).then(response => {
+		  if(response.ok) {
+			  dispatch(contactsAddSuccess());
+			  dispatch(getList(token));
+		  } else {
+			  if(response.status === 403) {
+				  dispatch(contactsAddFailed("Server responded with a session mismatch. Logging out"));
+				  dispatch(logoutSuccess());
+			  } else {
+				  dispatch(contactsAddFailed("Server responded with an error status:"+response.statusText));				  
+			  }
+		  }
+	  }).catch(error => {
+			dispatch(contactsAddFailed("Server responded with an error:"+error));
+	  })		
+	}
+}
 
 // Action Creators
 
@@ -57,6 +84,19 @@ export const contactsFetchSuccess = (list) => {
 export const contactsFetchFailed = (error) => {
 	return {
 		type:CONTACTS_FETCH_FAILED,
+		error:error
+	}
+}
+
+export const contactsAddSuccess = () => {
+	return {
+		type:CONTACTS_ADD_SUCCESS
+	}
+}
+
+export const contactsAddFailed = (error) => {
+	return {
+		type:CONTACTS_ADD_FAILED,
 		error:error
 	}
 }
