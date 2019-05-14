@@ -1,6 +1,7 @@
 import React from 'react';
 import {Table} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 const ContactList = ({contactList}) => {
 	let contacts = contactList.map(contact => {

@@ -8,70 +8,10 @@ import {connect} from 'react-redux';
 import './App.css';
 
 class App extends Component {
-  constructor(props) {
-	  super(props);
-	  this.state= {
-		  contactList:[]
-	  }
-  }
-  
-  loadFromStorage = () => {
-	  if(sessionStorage.getItem("state")) {
-		  let state = JSON.parse(sessionStorage.getItem("state"));
-		  this.setState(state)
-	  }
-  }
-  
-  saveToStorage = () => {
-	  sessionStorage.setItem("state",JSON.stringify(this.state));
-  }
-  
-  componentDidMount() {
-	  this.loadFromStorage();
-  }
-  //LOGIN API
 
 
-    
   
-  //CONTACTLIST API
-  
-  getList = () => {
-	  console.log("getList");
-	  let request = {
-		  method:"GET",
-		  mode:"cors",
-		  headers:{"Content-Type":"application/json",
-			       "token":this.state.token}
-	  }
-	  fetch("/api/contact",request).then(response => {
-		  if(response.ok) {
-			  response.json().then(data => {
-					this.setState({
-						contactList:data.data
-					}, () => {
-						this.saveToStorage();
-					})
-			  }).catch(error => {
-				console.log("Parse JSON failed for contactList:"+error);  
-			  })
-		  } else {
-			    if(response.status === 403) {
-				  this.setState({
-					  isLogged:false,
-					  token:"",
-					  contactList:[]
-				  }, () => {
-					  this.saveToStorage();
-				  })
-				}
-				console.log("Fetch list failed. Reason:"+response.status);
-		  }
-	  }).catch(error => {
-		  console.log(error);
-	  })
-  }
-  
+/*
   addToList = (contact) => {
 	  let request = {
 		  method:"POST",
@@ -99,7 +39,7 @@ class App extends Component {
 			console.log(error);
 	  })
   }
-  
+  */
   render() {
     return (
       <div className="App">
@@ -113,12 +53,12 @@ class App extends Component {
 			)}/>
 			<Route path="/list" render={() => (
 				this.props.isLogged ?
-				(<ContactList contactList={this.state.contactList}/>):
+				(<ContactList />):
 				(<Redirect to="/"/>)
 			)}/>
 			<Route path="/contact" render={() => (
 			    this.props.isLogged ?
-				(<ContactForm addToList={this.addToList}/>):
+				(<ContactForm />):
 				(<Redirect to="/"/>)
 			)}/>
 			<Route render={() => (
@@ -134,7 +74,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		isLogged:state.isLogged
+		isLogged:state.login.isLogged
 	}
 }
 
