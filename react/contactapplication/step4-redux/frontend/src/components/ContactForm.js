@@ -1,7 +1,8 @@
 import React from 'react';
 import {Form,Button,Label} from 'semantic-ui-react';
 import {connect} from 'react-redux';
-import {addToList} from '../actions/ContactActions';
+import {addToList,editContact} from '../actions/ContactActions';
+import {withRouter} from 'react-router-dom';
 
 class ContactForm extends React.Component {
 
@@ -21,9 +22,82 @@ class ContactForm extends React.Component {
 			street:"",
 			city:"",
 			postcode:"",
-			country:""			
+			country:"",
+			mode:"Add",
+			id:""
 		}
 	}	
+	
+	componentDidMount() {
+		console.log(this.props.location.pathname);
+		if(this.props.location.pathname.length > 8) {
+			let id = this.props.location.pathname.substring(9);
+			let tempContact = {};
+			for(let i=0;i<this.props.list.length;i++) {
+				if(id === this.props.list[i]._id) {
+					tempContact = this.props.list[i];
+				}
+			}
+			if(tempContact._id) {
+				console.log("id found!");
+				this.setState({
+					mode:"Edit",
+					name:tempContact.name,
+					surname:tempContact.surname,
+					title:tempContact.title,
+					emails:tempContact.email,
+					phones:tempContact.phone,
+					mobiles:tempContact.mobile,
+					nickname:tempContact.nickname,
+					street:tempContact.street,
+					city:tempContact.city,
+					country:tempContact.country,
+					postcode:tempContact.postcode,
+					id:tempContact._id
+				})
+			}
+		}
+	}
+	
+	removeFromLists = (event) => {
+		let tempArray = [];
+		if(event.target.id === "phonelabel") {
+			for(let i = 0;i<this.state.phones.length;i++) {
+				if(event.target.innerHTML == this.state.phones[i]) {
+					tempArray = this.state.phones;
+					tempArray.splice(i,1)
+					this.setState({
+						phones:tempArray
+					})
+					return;
+				}
+			}
+		}
+		if(event.target.id === "mobilelabel") {
+			for(let i = 0;i<this.state.mobiles.length;i++) {
+				if(event.target.innerHTML == this.state.mobiles[i]) {
+					tempArray = this.state.mobiles;
+					tempArray.splice(i,1)
+					this.setState({
+						mobiles:tempArray
+					})
+					return;
+				}
+			}
+		}
+		if(event.target.id === "emaillabel") {
+			for(let i = 0;i<this.state.emails.length;i++) {
+				if(event.target.innerHTML == this.state.emails[i]) {
+					tempArray = this.state.emails;
+					tempArray.splice(i,1)
+					this.setState({
+						emails:tempArray
+					})
+					return;
+				}
+			}			
+		}
+	}
 	
 	onChange = (event) => {
 		let state = {};
@@ -50,7 +124,11 @@ class ContactForm extends React.Component {
 			"postcode":this.state.postcode,
 			"country":this.state.country
 		}
-		this.props.dispatch(addToList(contact,this.props.token));
+		if(this.state.mode === "Add") {
+			this.props.dispatch(addToList(contact,this.props.token));
+		} else {
+			this.props.dispatch(editContact(contact,this.state.id,this.props.token));
+		}
 		this.setState({
 			name:"",
 			surname:"",
@@ -65,7 +143,9 @@ class ContactForm extends React.Component {
 			street:"",
 			city:"",
 			postcode:"",
-			country:""	
+			country:"",
+			mode:"Add",
+			id:""
 		})
 	}
 	
@@ -104,19 +184,19 @@ class ContactForm extends React.Component {
 		let phoneLabels = <div></div>;
 		if(this.state.phones.length > 0) {
 			phoneLabels = this.state.phones.map((phone,index) => 
-				<Label key={index}>{phone}</Label>
+				<Label key={index} id="phonelabel" onClick={this.removeFromLists}>{phone}</Label>
 			)
 		}
 		let mobileLabels = <div></div>;
 		if(this.state.mobiles.length > 0) {
 			mobileLabels = this.state.mobiles.map((mobile,index) => 
-				<Label key={index}>{mobile}</Label>
+				<Label key={index} id="mobilelabel" onClick={this.removeFromLists}>{mobile}</Label>
 			)
 		}			
 		let emailLabels = <div></div>;
 		if(this.state.emails.length > 0) {
 			emailLabels = this.state.emails.map((email,index) => 
-				<Label key={index}>{email}</Label>
+				<Label key={index} id="emaillabel" onClick={this.removeFromLists}>{email}</Label>
 			)
 		}
 		return (
@@ -155,6 +235,7 @@ class ContactForm extends React.Component {
 					<label htmlFor="phone">Phone</label>
 					<input type="text"
 						   name="phone"
+						   placeholder="Press enter to save information"
 						   value={this.state.phone}
 						   onKeyPress={this.handleKeyPress}
 						   onChange={this.onChange}/>
@@ -164,6 +245,7 @@ class ContactForm extends React.Component {
 					<label htmlFor="mobile">Mobile</label>
 					<input type="text"
 						   name="mobile"
+						   placeholder="Press enter to save information"
 						   value={this.state.mobile}
 						   onKeyPress={this.handleKeyPress}
 						   onChange={this.onChange}/>
@@ -173,6 +255,7 @@ class ContactForm extends React.Component {
 					<label htmlFor="email">Email</label>
 					<input type="email"
 						   name="email"
+						   placeholder="Press enter to save information"
 						   value={this.state.email}
 						   onKeyPress={this.handleKeyPress}
 						   onChange={this.onChange}/>
@@ -206,7 +289,7 @@ class ContactForm extends React.Component {
 						   onChange={this.onChange}/>
 				</Form.Field>
 			</Form>
-			<Button onClick={this.onSubmit}>Add</Button>
+			<Button onClick={this.onSubmit}>{this.state.mode}</Button>
 			</div>
 		)
 		
@@ -217,8 +300,9 @@ class ContactForm extends React.Component {
 
 const mapStateToProps = (state) => {
 	return {
-		token:state.login.token
+		token:state.login.token,
+		list:state.contacts.list
 	}
 }
 
-export default connect(mapStateToProps)(ContactForm);
+export default withRouter(connect(mapStateToProps)(ContactForm));
