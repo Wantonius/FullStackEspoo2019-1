@@ -5,7 +5,10 @@ import {
 	CONTACTS_ADD_SUCCESS,
 	CONTACTS_ADD_FAILED,
 	CONTACTS_REMOVE_SUCCESS,
-	CONTACTS_REMOVE_FAILED
+	CONTACTS_REMOVE_FAILED,
+	CONTACTS_EDIT_SUCCESS,
+	CONTACTS_EDIT_FAILED,
+	CLEAR_CONTACTS_STATE
 	} from '../actions/ContactActions';
 	
 	
@@ -82,6 +85,30 @@ const contactReducer = (state = initialState, action) => {
 				...state,
 				loading:false,
 				error:action.error
+			}
+			saveStateToStorage(tempState);
+			return tempState;
+		case CONTACTS_EDIT_SUCCESS:
+			tempState = {
+				...state,
+				loading:false,
+				error:""
+			}
+			saveStateToStorage(tempState);
+			return tempState;
+		case CONTACTS_EDIT_FAILED:
+			tempState = {
+				...state,
+				loading:false,
+				error:action.error
+			}
+			saveStateToStorage(tempState);
+			return tempState;
+		case CLEAR_CONTACTS_STATE:
+			tempState = {
+				...state,
+				loading:false,
+				list:[]
 			}
 			saveStateToStorage(tempState);
 			return tempState;

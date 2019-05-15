@@ -1,5 +1,6 @@
 //ACTION CONSTANTS
-import {getList} from './ContactActions';
+import {getList,clearContactsState} from './ContactActions';
+
 
 export const LOGIN_LOADING = "LOGIN_LOADING";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
@@ -118,12 +119,14 @@ export const loginFailed = (error) => {
 }
 
 export const logoutSuccess = () => {
+	clearContactsState();
 	return {
 		type:LOGOUT_SUCCESS
 	}
 }
 
 export const logoutFailed = (error) => {
+	clearContactsState();
 	return {
 		type:LOGOUT_FAILED,
 		error:error

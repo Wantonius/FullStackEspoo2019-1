@@ -4,6 +4,7 @@ const contactRouter = require('./routes/contactrouter');
 const mongoose = require('mongoose');
 const userModel = require('./models/user');
 const sessionModel = require('./models/session');
+const bcrypt = require('bcrypt-nodejs');
 
 let app = express();
 let port = process.env.PORT || 3001;
@@ -28,6 +29,15 @@ let session = {
 }
 
 */
+
+createHash = (pw) => {
+	return bcrypt.hashSync(pw,bcrypt.genSaltSync(8),null);
+}
+
+isPasswordValid = (pw,hash) => {
+	return bcrypt.compareSync(pw,hash);
+}
+
 isUserLogged = (req,res,next) => {
 	let token = req.headers.token;
 	if(!token) {
@@ -76,7 +86,7 @@ app.post("/register", function(req,res) {
 	}
 	let user = new userModel({
 		"username":req.body.username,
-		"password":req.body.password
+		"password":createHash(req.body.password)
 	})
 	user.save(function(err,item) {
 		if(err) {
@@ -103,7 +113,7 @@ app.post("/login",function(req,res) {
 			if(!user) {
 				return res.status(422).json({"message":"please provide proper information"});					
 			}
-			if(user.password === req.body.password) {
+			if(isPasswordValid(req.body.password,user.password)) {
 				let token = createToken();
 				let ttl = new Date().getTime()+time_to_live_diff;
 				let session = new sessionModel({

@@ -7,6 +7,9 @@ export const CONTACTS_ADD_SUCCESS = "CONTACTS_ADD_SUCCESS"
 export const CONTACTS_ADD_FAILED = "CONTACTS_ADD_FAILED"
 export const CONTACTS_REMOVE_SUCCESS = "CONTACTS_REMOVE_SUCCESS"
 export const CONTACTS_REMOVE_FAILED = "CONTACTS_REMOVE_FAILED"
+export const CONTACTS_EDIT_SUCCESS = "CONTACTS_EDIT_SUCCESS"
+export const CONTACTS_EDIT_FAILED = "CONTACTS_EDIT_FAILED"
+export const CLEAR_CONTACTS_STATE = "CLEAR_CONTACTS_STATE"
 // Actions
 
 export const getList = (token) => {
@@ -95,6 +98,35 @@ export const removeFromList = (id, token) => {
 	}
 }
 
+export const editContact = (contact,id,token) => {
+	return dispatch => {
+		let request = {
+			method:"PUT",
+			mode:"cors",
+			headers:{"Content-Type":"application/json",
+				   "token":token},
+			body:JSON.stringify(contact)
+		}
+		let url = "/api/contact/"+id;
+		dispatch(contactsLoading());
+		fetch(url,request).then(response =>{
+			if(response.ok) {
+				dispatch(editContactSuccess());
+				dispatch(getList(token));
+			} else {
+				if(response.status === 403) {
+					dispatch(editContactFailed("Server responded with a session mismatch. Logging Out."));
+					dispatch(logoutSuccess());
+				} else {
+					dispatch(editContactFailed("Server responded with an error:"+response.statusText));
+				}
+			}
+		}).catch(error => {
+				dispatch(editContactFailed("Server responded with an error:"+error));			
+		});
+	}
+}
+
 // Action Creators
 
 export const contactsLoading = () => {
@@ -140,5 +172,24 @@ export const contactsRemoveFailed = (error) => {
 	return {
 		type:CONTACTS_REMOVE_FAILED,
 		error:error
+	}
+}
+
+export const editContactSuccess = () => {
+	return {
+		type:CONTACTS_EDIT_SUCCESS
+	}
+}
+
+export const editContactFailed = (error) => {
+	return {
+		type:CONTACTS_EDIT_FAILED,
+		error:error
+	}
+}
+
+export const clearContactsState = () => {
+	return {
+		type:CLEAR_CONTACTS_STATE
 	}
 }
