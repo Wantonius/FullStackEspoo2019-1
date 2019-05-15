@@ -128,6 +128,7 @@ class ContactForm extends React.Component {
 			this.props.dispatch(addToList(contact,this.props.token));
 		} else {
 			this.props.dispatch(editContact(contact,this.state.id,this.props.token));
+			this.props.history.push("/list");
 		}
 		this.setState({
 			name:"",

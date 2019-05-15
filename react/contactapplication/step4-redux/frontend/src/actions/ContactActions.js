@@ -12,7 +12,7 @@ export const CONTACTS_EDIT_FAILED = "CONTACTS_EDIT_FAILED"
 export const CLEAR_CONTACTS_STATE = "CLEAR_CONTACTS_STATE"
 // Actions
 
-export const getList = (token) => {
+export const getList = (token, search) => {
 	return dispatch => {
 		let request = {
 		  method:"GET",
@@ -20,8 +20,12 @@ export const getList = (token) => {
 		  headers:{"Content-Type":"application/json",
 			       "token":token}
 		  }
+		  let url = "/api/contact"
+		  if(search) {
+			  url = url+"?name="+search;
+		  }
 		  dispatch(contactsLoading());
-		  fetch("/api/contact",request).then(response => {
+		  fetch(url,request).then(response => {
 			  if(response.ok) {
 				  response.json().then(data => {
 					  dispatch(contactsFetchSuccess(data.data));

@@ -1,16 +1,30 @@
 import React from 'react';
-import {Table,Button} from 'semantic-ui-react';
+import {Table,Button,Form} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {removeFromList} from '../actions/ContactActions';
+import {removeFromList,getList} from '../actions/ContactActions';
 
 class ContactList extends React.Component {
 	
 	constructor(props) {
 		super(props);
 		this.state = {
-			removeId:""
+			removeId:"",
+			search:""
 		}
+	}
+	onChange = (event) => {
+		let state = {};
+		state[event.target.name] = event.target.value;
+		this.setState(state);
+	}
+		
+	onSubmit = (event) => {
+		event.preventDefault();
+		this.props.dispatch(getList(this.props.token,this.state.search));
+		this.setState({
+			search:""
+		})
 	}
 	
 	remove = (event) => {
@@ -61,6 +75,15 @@ class ContactList extends React.Component {
 					</Table.Row>
 		})
 		return (
+			<div>
+			<Form onSubmit={this.onSubmit}>
+				<label htmlFor="search">Search by lastname</label>
+				<input type="text"
+					   name="search"
+					   onChange={this.onChange}
+					   value={this.state.search}/>
+				<Button type="submit">Search</Button>
+			</Form>		   
 			<Table celled>
 				<Table.Header>
 					<Table.Row>
@@ -76,6 +99,7 @@ class ContactList extends React.Component {
 				{contacts}
 				</Table.Body>
 			</Table>
+			</div>
 		)
 	}
 }

@@ -26,8 +26,13 @@ let contact = {
 
 router.get("/contact", function(req,res) {
 	let username = req.session.username;
+	let searchname = req.query.name;
+	let queryobject = {"user":username}
+	if(searchname) {
+		queryobject = {"user":username, "surname":searchname}
+	}
 	let list = [];
-	contactModel.find({"user":username}, function(err,items,count) {
+	contactModel.find(queryobject, function(err,items,count) {
 		if(err) {
 			return res.status(409).json({"data":list})
 		}
