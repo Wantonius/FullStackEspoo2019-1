@@ -8,12 +8,15 @@ import {ShoppingList} from './components/shoppinglist.component';
 import {ShoppingService} from './services/shoppingservice.service';
 import {ShoppingForm} from './components/shoppingform.component';
 import {AppRoutingModule} from './app-routing.module';
-
+import {NormalRow} from './components/normalrow.component';
+import {RemoveRow} from './components/removerow.component';
 @NgModule({
   declarations: [
     AppComponent,
 	ShoppingList,
-	ShoppingForm
+	ShoppingForm,
+	NormalRow,
+	RemoveRow
   ],
   imports: [
     BrowserModule,

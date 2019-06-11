@@ -10,6 +10,8 @@ import {ShoppingService} from '../services/shoppingservice.service';
 export class ShoppingList implements OnInit {
 	
 	public shoppinglist:ShoppingItem[] = []
+	private currentIndex:number = -1;
+	private mode:string = "normal";
 	
 	constructor(private _shoppingService:ShoppingService) {}
 	
@@ -29,5 +31,23 @@ export class ShoppingList implements OnInit {
 	
 	editItem(idx) {
 		//this.shoppingitem = this.shoppinglist[idx];
+	}
+	
+	onNormalrowButtonClick(data) {
+		if(data.type === "remove") {
+			this.currentIndex = data.index;
+			this.mode = "remove";
+		} else {
+			this.currentIndex = data.index;
+			this.mode = "edit";
+		}
+	}
+	
+	onRemoverowButtonClick(data) {
+		this.currentIndex = -1;
+		this.mode = "normal";
+		if(data.type === "ok") {
+			this.removeFromList(data.index);
+		} 
 	}
 }

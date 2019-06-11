@@ -1,20 +1,17 @@
 <table class="table">
-	<thead>
-		<tr>
-			<th>Type</th>
-			<th>Price</th>
-			<th>Count</th>
-			<th>Remove</th>
-			<th>Edit</th>
-		</tr>
-	</thead>
 	<tbody>
 		<tr *ngFor="let item of shoppinglist;let idx=index">
-			<td>{{item.type}}</td>
-			<td>{{item.price}}</td>
-			<td>{{item.count}}</td>
-			<td><button class="btn btn-secondary" (click)="removeFromList(idx)">Buy</button></td>
-			<td><button class="btn btn-secondary" (click)="editItem(idx)">Edit</button></td>
+			<normal-row *ngIf="currentIndex!==idx; else otherrow"
+			[index]='idx' 
+			[item]='item' (buttonClicked)='onNormalrowButtonClick($event)'>
+			</normal-row>
+			<ng-template #otherrow>
+			<remove-row
+			[index]='idx' 
+			[item]='item' (buttonClicked)='onRemoverowButtonClick($event)'>
+			</remove-row>		
+		</ng-template>
 		</tr>
+
 	</tbody>
 </table>
