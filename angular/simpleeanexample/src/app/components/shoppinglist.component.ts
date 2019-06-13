@@ -25,13 +25,21 @@ export class ShoppingList implements OnInit {
 	}
 	
 	getList() {
-		this.shoppinglist = this._shoppingService.getList();
+		this._shoppingService.getList().subscribe(
+			data => this.shoppinglist = data,
+			error => console.log(error),
+			() => console.log("Get shoppinglist done!")
+		);
 	}
 	
 
-	removeFromList(idx) {
-		this._shoppingService.removeFromList(idx);
-		this.getList();
+	removeFromList(id) {
+		this._shoppingService.removeFromList(id).subscribe(
+			data => this.getList(),
+			error => console.log(error),
+			() => console.log("Remove item from shoppinglist done!")
+		);
+		
 	}
 	
 	editItem(idx) {
@@ -52,7 +60,8 @@ export class ShoppingList implements OnInit {
 		this.currentIndex = -1;
 		this.mode = "normal";
 		if(data.type === "ok") {
-			this.removeFromList(data.index);
+			let index = parseInt(data.index,10);
+			this.removeFromList(this.shoppinglist[index].id);
 		} 
 	}
 }

@@ -1,31 +1,43 @@
 import {Injectable} from '@angular/core';
 import {ShoppingItem} from '../models/shoppingitem.model';
+import {LoginService} from './loginservice.service';
+import {HttpClient,HttpHeaders} from '@angular/common/http';
+import {BackendMessage} from '../models/backendmessage.model';
 
 @Injectable()
 export class ShoppingService {
 
-	private id:number = 100;
-	private shoppinglist:ShoppingItem[] = [];
+	constructor(private _login:LoginService, private _http:HttpClient) {}
+	
 	
 	getList() {
-		return this.shoppinglist;
+		const httpOptions = {
+			headers: new HttpHeaders({
+				"Content-type":"application/json",
+				"token":this._login.getToken()
+			})
+		}
+		return this._http.get<ShoppingItem[]>("/a/api/shoppinglist",httpOptions);
 	}
 	
 	addToList(shoppingitem:ShoppingItem) {
-		if(shoppingitem.id === 0) {
-			shoppingitem.id = this.id;
-			this.id++;
-			this.shoppinglist.push(shoppingitem);
-		} else {
-			for(let i=0;i<this.shoppinglist.length;i++) {
-				if(this.shoppinglist[i].id === shoppingitem.id) {
-					this.shoppinglist.splice(i,1,shoppingitem);
-				}
-			}
-		}		
+		const httpOptions = {
+			headers: new HttpHeaders({
+				"Content-type":"application/json",
+				"token":this._login.getToken()
+			})
+		}
+		return this._http.post<BackendMessage>("/a/api/shoppinglist",shoppingitem,httpOptions);		
 	}
 	
-	removeFromList(idx) {
-		this.shoppinglist.splice(idx,1);
+	removeFromList(id) {
+		const httpOptions = {
+			headers: new HttpHeaders({
+				"Content-type":"application/json",
+				"token":this._login.getToken()
+			})
+		}
+		return this._http.delete<BackendMessage>("/a/api/shoppinglist/"+id,httpOptions);		
+		
 	}
 }

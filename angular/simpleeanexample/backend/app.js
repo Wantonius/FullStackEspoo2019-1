@@ -70,10 +70,49 @@ app.post("/a/logout", function(req,res) {
 	return res.status(404).json({"message":"not found"});
 })
 
-//SHOPPING API
-
 
 //LOGIN FILTER
+
+function isUserLogged(req,res,next) {
+	let token = req.headers.token;
+	for(let i=0;i<loggedUsers.length;i++) {
+		if(loggedUsers[i].token === token) {
+			return next();
+		}
+	}
+	return res.status(403).json({"message":"forbidden"});
+}
+
+app.use("/a/api/",isUserLogged);
+
+//SHOPPING API
+
+app.get("/a/api/shoppinglist",function(req,res) {
+	return res.status(200).json(database);
+});
+
+app.post("/a/api/shoppinglist", function(req,res) {
+	let item = {
+		id:id,
+		type:req.body.type,
+		price:req.body.price,
+		count:req.body.count
+	}
+	database.push(item);
+	id++;
+	return res.status(200).json({"message":"success"});
+});
+
+app.delete("/a/api/shoppinglist/:id",function(req,res) {
+	let id = parseInt(req.params.id,10);
+	for(let i=0;i<database.length;i++) {
+		if(id === database[i].id) {
+			database.splice(i,1);
+			return res.status(200).json({"message":"success"});
+		}
+	}
+	return res.status(404).json({"message":"not found"});
+});
 
 app.listen(3000);
 console.log("Running in port 3000");

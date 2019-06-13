@@ -25,8 +25,16 @@ export class LoginForm implements OnInit{
 			this.message = "Username must be atleast 4 characters and password 8 characters long!";
 			return;
 		}
-		this._login.login(this.username,this.password);
-		this._router.navigate(['/list']);
+		this._login.login(this.username,this.password).subscribe(
+			data => {
+				this.message = data.message;
+				this._login.setLogin(true,data.token);
+				this._router.navigate(['/list']);				
+				},
+			error => this.message = error.message,
+			() => console.log("login complete")
+		);
+
 	}
 
 	register() {

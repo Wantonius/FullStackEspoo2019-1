@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BackendMessage} from '../models/backendmessage.model';
 @Injectable()
 export class LoginService {
 
@@ -18,20 +19,35 @@ export class LoginService {
 				"Content-Type":"application/json"
 			})
 		}
-		return this._http.post("/a/register",user,httpOptions);
+		return this._http.post<BackendMessage>("/a/register",user,httpOptions);
 	}
 	
 	login(username:string, password:string) {
-		console.log("login");
-		this.isLogged = true;
+		const user = {
+			"username":username,
+			"password":password
+		}
+		const httpOptions = {
+			headers: new HttpHeaders({
+				"Content-Type":"application/json"
+			})
+		}
+		return this._http.post<BackendMessage>("/a/login",user,httpOptions);
 	}
 	
 	logout() {
-		this.isLogged = false;
+		const httpOptions = {
+			headers: new HttpHeaders({
+				"Content-Type":"application/json",
+				"token":this.token
+			})
+		}
+		return this._http.post<BackendMessage>("/a/logout",{},httpOptions);
 	}
 
-	setLogin(login:boolean) {
+	setLogin(login:boolean, token:string) {
 		this.isLogged = login;
+		this.token = token
 	}
 	
 	isUserLogged() {

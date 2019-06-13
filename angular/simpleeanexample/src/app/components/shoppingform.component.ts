@@ -19,7 +19,11 @@ export class ShoppingForm implements OnInit{
 	}
 	
 	addToList() {
-		this._shoppingService.addToList(this.shoppingitem);
+		this._shoppingService.addToList(this.shoppingitem).subscribe(
+			data => console.log(data),
+			error => console.log(error),
+			() => console.log("Add to list done!")
+		);
 		this.shoppingitem = new ShoppingItem("",0,0,0);
 	}
 
