@@ -10,21 +10,26 @@ import {ShoppingForm} from './components/shoppingform.component';
 import {AppRoutingModule} from './app-routing.module';
 import {NormalRow} from './components/normalrow.component';
 import {RemoveRow} from './components/removerow.component';
+import {LoginService} from './services/loginservice.service';
+import {LoginForm} from './components/loginform.component';
+import {HttpClientModule} from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
 	ShoppingList,
 	ShoppingForm,
 	NormalRow,
-	RemoveRow
+	RemoveRow,
+	LoginForm
   ],
   imports: [
     BrowserModule,
 	FormsModule,
 	AppRoutingModule,
-	NgbModule
+	NgbModule,
+	HttpClientModule
   ],
-  providers: [ShoppingService],
+  providers: [ShoppingService, LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

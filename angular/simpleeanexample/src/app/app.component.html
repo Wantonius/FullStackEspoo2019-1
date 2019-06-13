@@ -1,14 +1,21 @@
 <div style="text-align:center">
 	<nav class="navbar navbar-expand-lg navbar-light">
 		<a class="navbar-brand" href="#">Shopping List</a>		
-		<ul class="navbar-nav">
+		<ul class="navbar-nav" *ngIf="isUserLogged(); else notlogged">
 			<li class="nav-item">
 				<a class="nav-link" routerLink="/list">Shopping List</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" routerLink="/form">Add to list</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link" (click)="logout()" routerLink="/loginpage">Logout</a>
+			</li>
 		</ul>
+		<ng-template #notlogged>
+			<ul class="navbar-nav">
+			</ul>
+		</ng-template>
 	</nav>	
 	<hr/>
 	<router-outlet></router-outlet>

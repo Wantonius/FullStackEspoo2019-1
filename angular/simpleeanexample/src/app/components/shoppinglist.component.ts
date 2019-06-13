@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ShoppingItem} from '../models/shoppingitem.model';
 import {ShoppingService} from '../services/shoppingservice.service';
-
+import {LoginService} from '../services/loginservice.service';
+import {Router} from '@angular/router';
 @Component({
 	selector:'shoppinglist',
 	templateUrl:'./shoppinglist.component.html',
@@ -13,10 +14,14 @@ export class ShoppingList implements OnInit {
 	private currentIndex:number = -1;
 	private mode:string = "normal";
 	
-	constructor(private _shoppingService:ShoppingService) {}
+	constructor(private _shoppingService:ShoppingService, private _login:LoginService, private _router:Router) {}
 	
 	ngOnInit() {
-		this.getList();
+		if(!this._login.isUserLogged()) {
+			this._router.navigate(['/login']);
+		} else {
+			this.getList();
+		}
 	}
 	
 	getList() {

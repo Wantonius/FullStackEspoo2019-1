@@ -1,0 +1,17 @@
+<form #loginform="ngForm">
+	<label for="username">Username</label>
+	<input type="text"
+		   name="username"
+		   id="username"
+		   [(ngModel)]="username"/>
+    <br/>
+	<label for="password">Password</label>
+	<input type="password"
+		   name="password"
+		   id="password"
+		   [(ngModel)]="password"/>
+	<br/>
+	<button type="button" class="btn btn-secondary" (click)="register()">Register</button>
+	<button type="button" class="btn btn-secondary" (click)="login()">Login</button>
+	<h5>{{message}}</h5>
+</form>
