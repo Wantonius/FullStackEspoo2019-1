@@ -1,0 +1,17 @@
+<table class="table">
+	<tbody>
+		<tr *ngFor="let item of shoppinglist;let idx=index">
+			<normal-row *ngIf="currentIndex!==idx; else otherrow"
+			[index]='idx' 
+			[item]='item' (buttonClicked)='onNormalrowButtonClick($event)'>
+			</normal-row>
+			<ng-template #otherrow>
+			<remove-row
+			[index]='idx' 
+			[item]='item' (buttonClicked)='onRemoverowButtonClick($event)'>
+			</remove-row>		
+		</ng-template>
+		</tr>
+
+	</tbody>
+</table>

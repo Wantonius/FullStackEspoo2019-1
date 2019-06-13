@@ -1,0 +1,12 @@
+<h2>Game Screen</h2>
+<p>Guess a number between {{currentLow}} and {{currentHigh}}. You have 
+guessed {{guesses}} times</p>
+<p>Game says:{{message}}</p>
+<form (ngSubmit)="guess()" #guessform="ngForm">
+	<label for="guess">Guess a number</label>
+	<input type="number"
+		   [(ngModel)]="currentGuess"
+		   name="guess"
+		   id="guess"/>
+	<button type="submit">Guess</button>
+</form>
