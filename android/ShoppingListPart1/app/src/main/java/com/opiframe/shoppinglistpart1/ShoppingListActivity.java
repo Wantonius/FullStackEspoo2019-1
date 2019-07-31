@@ -1,14 +1,17 @@
 package com.opiframe.shoppinglistpart1;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,6 +39,29 @@ public class ShoppingListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(ShoppingListActivity.this,MainActivity.class);
                 startActivityForResult(i,100);
+            }
+        });
+        lw.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                final int pos = position;
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingListActivity.this);
+                dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        adapter.remove(adapter.getItem(pos));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        return;
+                    }
+                });
+                dialog.setMessage("Are you sure you want to delete this item?");
+                dialog.show();
+                return true;
             }
         });
     }
