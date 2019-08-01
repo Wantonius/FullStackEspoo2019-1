@@ -12,8 +12,8 @@ export default class ShoppingForm extends React.Component {
 		super(props);
 		this.state = {
 			type:"",
-			price:"0",
-			count:"0"
+			price:"",
+			count:""
 		}
 	}
 	
@@ -27,8 +27,8 @@ export default class ShoppingForm extends React.Component {
 		this.props.addToList(item);
 		this.setState({
 			type:"",
-			price:"0",
-			count:"0"
+			price:"",
+			count:""
 		});
 	}
 	
@@ -56,6 +56,7 @@ export default class ShoppingForm extends React.Component {
 						})
 					}
 				}
+							keyboardType="numeric"
 							value={this.state.count}
 							placeholder="Number of items"/>
 			</View>
@@ -68,6 +69,7 @@ export default class ShoppingForm extends React.Component {
 						})
 					}
 				}
+							keyboardType="numeric"
 							value={this.state.price}
 							placeholder="Price of item"/>
 			</View>
